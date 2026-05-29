@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DevOps Frontend</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0e1a;
+      --card-bg: #0d1525;
+      --border: #1a2a45;
+      --cyan: #00c8ff;
+      --cyan-dim: #00a8d6;
+      --text: #c8d8f0;
+      --text-dim: #6a8ab0;
+      --green: #00e676;
+      --red: #ff5252;
+      --orange: #ffab40;
+      --card-glow: 0 0 40px rgba(0,200,255,0.08);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(0,100,200,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0,200,255,0.04) 0%, transparent 50%);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 44px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--card-glow), 0 8px 40px rgba(0,0,0,0.6);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+      text-shadow: 0 0 30px rgba(0,200,255,0.4);
+    }
+
+    /* Status block */
+    .status-block {
+      background: rgba(0,200,255,0.04);
+      border: 1px solid rgba(0,200,255,0.12);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.8;
+    }
+
+    .status-block .label { color: var(--cyan); font-weight: 600; }
+    .status-block .val   { color: var(--text); }
+    .status-block .running { color: var(--green); }
+    .status-dot {
+      display: inline-block; width: 8px; height: 8px;
+      background: var(--green); border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+    }
+
+    /* Tools section */
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .tool-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+    .tool-chip:hover {
+      border-color: rgba(0,200,255,0.3);
+      color: var(--text);
+      background: rgba(0,200,255,0.05);
+    }
+    .tool-chip.selected {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0,200,255,0.08);
+      box-shadow: 0 0 16px rgba(0,200,255,0.12);
+    }
+    .tool-chip .icon { font-size: 1.1rem; }
+
+    /* Form */
+    .form-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    input[type="text"] {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.18s;
+    }
+    input[type="text"]::placeholder { color: var(--text-dim); }
+    input[type="text"]:focus { border-color: var(--cyan); }
+
+    .selected-tool-display {
+      width: 100%;
+      background: rgba(0,200,255,0.04);
+      border: 1px solid rgba(0,200,255,0.25);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      min-height: 44px;
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+      transition: all 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:hover:not(:disabled) {
+      background: #00e0ff;
+      box-shadow: 0 0 24px rgba(0,200,255,0.4);
+      transform: translateY(-1px);
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Toast */
+    .toast {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+    .toast.success {
+      background: rgba(0,230,118,0.08);
+      border: 1px solid rgba(0,230,118,0.3);
+      color: var(--green);
+      display: block;
+    }
+    .toast.error {
+      background: rgba(255,82,82,0.08);
+      border: 1px solid rgba(255,82,82,0.3);
+      color: var(--red);
+      display: block;
+    }
+    .toast-icon { font-size: 1.1rem; margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>DevOps Frontend</h1>
+
+    <!-- Status -->
+    <div class="status-block" id="statusBlock">
+      <div><span class="label">Backend:</span> <span class="val" id="backendName">Connecting…</span></div>
+      <div><span class="label">Status:</span> <span class="val" id="backendStatus">—</span></div>
+      <div><span class="label">Message:</span> <span class="val" id="backendMsg">—</span></div>
+    </div>
+
+    <!-- DevOps Tools -->
+    <div class="section-title">DevOps Tools</div>
+    <div class="tools-grid">
+      <div class="tool-chip" data-tool="Docker"      onclick="selectTool(this)"><span class="icon">🐳</span> Docker</div>
+      <div class="tool-chip" data-tool="CI/CD"       onclick="selectTool(this)"><span class="icon">🔄</span> CI/CD</div>
+      <div class="tool-chip" data-tool="AWS"         onclick="selectTool(this)"><span class="icon">☁️</span> AWS</div>
+      <div class="tool-chip" data-tool="Kubernetes"  onclick="selectTool(this)"><span class="icon">⚙️</span> Kubernetes</div>
+      <div class="tool-chip" data-tool="Terraform"   onclick="selectTool(this)"><span class="icon">🏗️</span> Terraform</div>
+      <div class="tool-chip" data-tool="Ansible"     onclick="selectTool(this)"><span class="icon">📦</span> Ansible</div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-title">Send Data to Backend</div>
+    <div class="field">
+      <input type="text" id="usernameInput" placeholder="Enter your name" />
+    </div>
+    <div class="field">
+      <div class="selected-tool-display" id="toolDisplay">No tool selected — click one above</div>
+    </div>
+    <button class="btn" id="submitBtn" onclick="submitData()" disabled>Submit</button>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    let selectedTool = "";
+
+    // Fetch health on load
+    async function fetchHealth() {
+      try {
+        const res = await fetch("/api/health");
+        const data = await res.json();
+        document.getElementById("backendName").textContent   = data.backend  || "Flask Backend";
+        document.getElementById("backendStatus").innerHTML  = `<span class="running"><span class="status-dot"></span>${data.status || "Running"}</span>`;
+        document.getElementById("backendMsg").textContent   = data.message   || "";
+      } catch {
+        document.getElementById("backendStatus").innerHTML = `<span style="color:var(--red)">⚠ Unreachable</span>`;
+      }
+    }
+
+    function selectTool(el) {
+      document.querySelectorAll(".tool-chip").forEach(c => c.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedTool = el.dataset.tool;
+      document.getElementById("toolDisplay").textContent = selectedTool;
+      checkReady();
+    }
+
+    function checkReady() {
+      const name = document.getElementById("usernameInput").value.trim();
+      document.getElementById("submitBtn").disabled = !(name && selectedTool);
+    }
+
+    document.getElementById("usernameInput").addEventListener("input", checkReady);
+
+    async function submitData() {
+      const username = document.getElementById("usernameInput").value.trim();
+      const tool = selectedTool;
+      const btn = document.getElementById("submitBtn");
+      const toast = document.getElementById("toast");
+
+      btn.disabled = true;
+      btn.textContent = "Submitting…";
+      toast.className = "toast";
+
+      try {
+        const res = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, tool })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          toast.className = "toast success";
+          toast.innerHTML = `<span class="toast-icon">✅</span> ${data.message}`;
+          // Reset
+          document.getElementById("usernameInput").value = "";
+          document.querySelectorAll(".tool-chip").forEach(c => c.classList.remove("selected"));
+          document.getElementById("toolDisplay").textContent = "No tool selected — click one above";
+          selectedTool = "";
+        } else {
+          throw new Error(data.error || "Unknown error");
+        }
+      } catch (err) {
+        toast.className = "toast error";
+        toast.innerHTML = `<span class="toast-icon">❌</span> ${err.message}`;
+      } finally {
+        btn.textContent = "Submit";
+        btn.disabled = false;
+        checkReady();
+      }
+    }
+
+    fetchHealth();
+  </script>
+</body>
+</html>
